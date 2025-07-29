@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useAuthStore } from 'stores/auth'
 import router from '@/router'
 
-const API_URL = process.env.VUE_API_BASE_URL
+const API_URL = process.env.VUE_API_BASE_URL || 'http://localhost:5000'
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -17,8 +17,8 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use((config) => {
   const authStore = useAuthStore()
 
-  if (authStore.isAuthenticated && authStore.user?.token) {
-    config.headers.Authorization = `Bearer ${authStore.user.token}`
+  if (authStore.isAuthenticated && authStore.accessToken) {
+    config.headers.Authorization = `Bearer ${authStore.accessToken}`
   }
 
   return config
@@ -36,15 +36,15 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true
 
       try {
-        if (authStore.refreshToken) {
-          await authStore.refreshToken()
-          originalRequest.headers.Authorization = `Bearer ${authStore.user.token}`
+        const refreshed = await authStore.refreshToken()
+        if (refreshed) {
+          originalRequest.headers.Authorization = `Bearer ${authStore.accessToken}`
           return apiClient(originalRequest)
         }
       } catch (e) {
         console.log(e)
-        authStore.logout()
-        router.push('/login')
+        authStore.logout(false)
+        authStore.router?.push('/login')
       }
     }
 

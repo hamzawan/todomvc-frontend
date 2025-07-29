@@ -34,44 +34,32 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   })
 
-  // Add a global navigation guard
+  // Add navigation guard
   Router.beforeEach(async (to, from, next) => {
+    // Import here to avoid circular dependency
+    const { useAuthStore } = await import('src/stores/auth')
     const authStore = useAuthStore()
 
-    // Initialize auth store from localStorage if not already initialized
-    // This ensures we have the latest data from localStorage
-    if (!authStore.user && !authStore.accessToken) {
-      console.log('Initializing auth store from localStorage...')
+    // Initialize auth store if needed
+    if (!authStore.accessToken) {
       authStore.initialize()
     }
 
-    // Add a small delay to ensure localStorage data is loaded
-    // This is especially important on page refresh
-    await new Promise((resolve) => setTimeout(resolve, 0))
+    // Check and refresh token if needed
+    if (authStore.accessToken && authStore.isTokenExpired) {
+      await authStore.checkAndRefreshToken()
+    }
 
     const isAuthenticated = authStore.isAuthenticated
-
     const requiresAuth = to.meta?.requiresAuth
 
-    // Check if the route requires authentication
     if (requiresAuth && !isAuthenticated) {
-      console.log('Nav guard: User not authenticated, redirecting to login...')
       next({ path: '/login' })
-    }
-
-    // Special case: if going to root path and authenticated, redirect to dashboard
-    else if (to.path === '/' && isAuthenticated) {
-      console.log('Nav guard: Root path with auth, redirecting to dashboard...')
+    } else if (to.path === '/' && isAuthenticated) {
       next({ path: '/dashboard' })
-    }
-
-    // Special case: if going to root path and not authenticated, redirect to login
-    else if (to.path === '/' && !isAuthenticated) {
-      console.log('Nav guard: Root path without auth, redirecting to login...')
+    } else if (to.path === '/' && !isAuthenticated) {
       next({ path: '/login' })
     } else {
-      // Allow navigation
-      console.log('Nav guard: Navigation allowed')
       next()
     }
   })
