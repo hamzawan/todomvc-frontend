@@ -1,5 +1,10 @@
 import { defineRouter } from '#q-app/wrappers'
-import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
+import {
+  createRouter,
+  createMemoryHistory,
+  createWebHistory,
+  createWebHashHistory,
+} from 'vue-router'
 import routes from './routes'
 import { useAuthStore } from 'src/stores/auth'
 
@@ -15,7 +20,9 @@ import { useAuthStore } from 'src/stores/auth'
 export default defineRouter(function (/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
-    : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)
+    : process.env.VUE_ROUTER_MODE === 'history'
+      ? createWebHistory
+      : createWebHashHistory
 
   const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
@@ -24,30 +31,50 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     // Leave this as is and make changes in quasar.conf.js instead!
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
-    history: createHistory(process.env.VUE_ROUTER_BASE)
+    history: createHistory(process.env.VUE_ROUTER_BASE),
   })
 
-
   // Add a global navigation guard
-  Router.beforeEach((to, from, next) => {
-    const authStore = useAuthStore(); // Initialize the auth store
+  Router.beforeEach(async (to, from, next) => {
+    const authStore = useAuthStore()
+
+    // Initialize auth store from localStorage if not already initialized
+    // This ensures we have the latest data from localStorage
+    if (!authStore.user && !authStore.accessToken) {
+      console.log('Initializing auth store from localStorage...')
+      authStore.initialize()
+    }
+
+    // Add a small delay to ensure localStorage data is loaded
+    // This is especially important on page refresh
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    const isAuthenticated = authStore.isAuthenticated
+
+    const requiresAuth = to.meta?.requiresAuth
 
     // Check if the route requires authentication
-    if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-      // Redirect to login if not authenticated
-      console.log("Nav guard in action... Redirected to login...")
-      next({ path: '/login' });
+    if (requiresAuth && !isAuthenticated) {
+      console.log('Nav guard: User not authenticated, redirecting to login...')
+      next({ path: '/login' })
     }
-    // Check if the route requires the user to be non-authenticated
-    else if (to.meta.requiresAuth === false && authStore.isAuthenticated) {
-      // Redirect to dashboard if authenticated
-      console.log("Nav guard in action... Redirected to dashboard...")
-      next({ path: '/dashboard' });
+
+    // Special case: if going to root path and authenticated, redirect to dashboard
+    else if (to.path === '/' && isAuthenticated) {
+      console.log('Nav guard: Root path with auth, redirecting to dashboard...')
+      next({ path: '/dashboard' })
+    }
+
+    // Special case: if going to root path and not authenticated, redirect to login
+    else if (to.path === '/' && !isAuthenticated) {
+      console.log('Nav guard: Root path without auth, redirecting to login...')
+      next({ path: '/login' })
     } else {
       // Allow navigation
-      next();
+      console.log('Nav guard: Navigation allowed')
+      next()
     }
-  });
+  })
 
   return Router
 })
