@@ -1,5 +1,4 @@
 import { Notify } from 'quasar'
-import localStorageService from '@/services/localStorage.service'
 
 export async function handleAuthRequest(store, requestFn, router) {
   let response
@@ -22,12 +21,12 @@ export async function handleAuthRequest(store, requestFn, router) {
   }
 
   const { person, access_token, expiry } = response.data
-  
+
   // Use the store's setAuthData method for consistency
   store.setAuthData({
     user: person,
     accessToken: access_token,
-    accessTokenExpiry: expiry
+    accessTokenExpiry: expiry,
   })
 
   router.push('/dashboard')
