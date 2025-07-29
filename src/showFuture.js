@@ -9,7 +9,7 @@ const getShowFuture = () => {
     }
   }
 
-  return process.env.VUE_SHOW_FUTURE === 'true'
+  return import.meta.env.VITE_SHOW_FUTURE === 'true'
 }
 
 // Create a reactive getter that updates when the URL changes
