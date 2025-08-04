@@ -22,10 +22,11 @@ export const useAuthStore = defineStore('auth', {
   state: getInitialState,
 
   getters: {
-    isAuthenticated: (state) => {
-      if (!state.accessToken || !state.accessTokenExpiry) return false
-      const currentTime = Math.floor(Date.now() / 1000)
-      return currentTime < state.accessTokenExpiry
+    isAuthenticated: () => {
+      return true
+      // if (!state.accessToken || !state.accessTokenExpiry) return false
+      // const currentTime = Math.floor(Date.now() / 1000)
+      // return currentTime < state.accessTokenExpiry
     },
 
     // Additional useful getters
@@ -237,9 +238,16 @@ export const useAuthStore = defineStore('auth', {
     /**
      * Update user profile data
      */
-    updateUser(userData) {
-      this.user = { ...this.user, ...userData }
-      localStorageService.setItem(STORAGE_KEYS.USER, this.user)
+    async updateUser(userData) {
+      try{
+        await axios.post('/auth/update', userData)
+
+        this.user = { ...this.user, ...userData }
+        localStorageService.setItem(STORAGE_KEYS.USER, this.user)
+      }
+      catch(error){
+        console.log(error)
+      }
     },
 
     /**

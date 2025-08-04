@@ -16,6 +16,7 @@
             :rules="[
                 (val) => val && validateTaskName(val) || 'Please enter a valid task name.',
               ]"
+            class="q-mb-md"
           />
 
            <q-input
@@ -24,6 +25,7 @@
             dense
             required
             autofocus
+            class="q-mb-md"
           />
 
           <q-select
@@ -41,7 +43,7 @@
         </q-form>
       </q-card-section>
 
-      <q-card-actions align="right">
+      <q-card-actions align="right" class="q-pa-md">
         <q-btn flat label="Cancel" v-close-popup />
         <q-btn :label="buttonLabel" color="primary" @click="submitTask" :loading="isLoading" />
       </q-card-actions>
@@ -90,7 +92,7 @@ const buttonLabel = computed(() => isEditMode.value ? 'Update' : 'Add')
 const task = ref({
   name: '',
   priority: '',
-  descritpion: ''
+  description: ''
 })
 
 const priorityOptions = [

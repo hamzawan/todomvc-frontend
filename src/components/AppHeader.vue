@@ -13,14 +13,17 @@
 
       <q-toolbar-title> Todo MVC </q-toolbar-title>
 
-      <div class="q-mr-md text-caption text-grey-5">v{{ version }}</div>
+      <!-- <div class="q-mr-md text-caption text-grey-5">v{{ version }}</div> -->
 
       <div v-if="authStore.isAuthenticated" class="cursor-pointer">
         Logged in as
-        <b>{{ authStore.user.first_name }} {{ authStore.user.last_name }}</b>
+        <b>{{ authStore?.user?.first_name ?? 'John' }} {{ authStore?.user?.last_name ?? 'Doe' }}</b> -->
         <q-icon size="xs" name="arrow_drop_down" />
         <q-menu fir anchor="bottom right" self="top right">
           <q-list style="min-width: 100px">
+            <q-item clickable v-close-popup>
+              <q-item-section @click="toggleEditProfileModal()">Edit username</q-item-section>
+            </q-item>
             <q-item clickable v-close-popup>
               <q-item-section @click="authStore.logout()">Logout</q-item-section>
             </q-item>
@@ -35,14 +38,23 @@
       <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
     </q-list>
   </q-drawer>
+
+  <EditUserNameModalComponent v-model="showEditUserNameModal" @editProfile="editProfile" />
+
 </template>
 
 
 <script setup>
-import { ref } from 'vue'
+import { ref, defineAsyncComponent } from 'vue'
 import { useAuthStore } from 'stores/auth'
-import versionData from '@/version.json'
+// import versionData from '@/version.json'
 import EssentialLink from 'components/EssentialLink.vue'
+
+const EditUserNameModalComponent = defineAsyncComponent(() =>
+  import('components/EditUserNameModal.vue')
+)
+
+const showEditUserNameModal = ref(false)
 
 const linksList = [
   {
@@ -53,11 +65,20 @@ const linksList = [
 ]
 
 const authStore = useAuthStore()
-const version = versionData.version
+// const version = versionData.version
 
 const leftDrawerOpen = ref(false)
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
+}
+
+function toggleEditProfileModal() {
+  showEditUserNameModal.value = true
+}
+
+function editProfile(user) {
+  authStore.updateUser(user)
+  showEditUserNameModal.value = false
 }
 </script>
