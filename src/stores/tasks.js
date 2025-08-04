@@ -46,7 +46,7 @@ export const useTasksStore = defineStore('tasks', {
                 this.tasks = response.data
             } catch {
                 Notify.create({
-                    message: 'An unknown error occurred',
+                    message: 'Something went wrong. Please try again later.',
                     color: 'negative',
                 })
             }
@@ -55,7 +55,6 @@ export const useTasksStore = defineStore('tasks', {
             try {
                 const response = await axios.post('/tasks/create', task)
                 this.tasks.push(response.data)
-                // this.tasks.push({...task, id:9, completed: false})
                 Notify.create({
                     message: 'Task added successfully',
                     color: 'positive',
@@ -64,7 +63,7 @@ export const useTasksStore = defineStore('tasks', {
 
             } catch {
                 Notify.create({
-                    message: 'An unknown error occurred',
+                    message: 'Something went wrong. Please try again later.',
                     color: 'negative',
                 })
             }
@@ -79,7 +78,7 @@ export const useTasksStore = defineStore('tasks', {
                 })
             } catch {
                 Notify.create({
-                    message: 'An unknown error occurred',
+                    message: 'Something went wrong. Please try again later.',
                     color: 'negative',
                 })
             }
@@ -94,7 +93,7 @@ export const useTasksStore = defineStore('tasks', {
                 })
             } catch {
                 Notify.create({
-                    message: 'An unknown error occurred',
+                    message: 'Something went wrong. Please try again later.',
                     color: 'negative',
                 })
             }

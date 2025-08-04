@@ -35,7 +35,15 @@
     <!-- Task List -->
     <q-list bordered separator style="border-radius: 10px; padding: 10px 0px;">
       <q-infinite-scroll :disable="isAllLoaded" @load="loadMoreTasks" :offset="200">
-        <template v-for="task in filteredTasks" :key="task.id">
+        <template v-if="taskStore.taskList.length === 0">
+          <div class="text-center q-mb-md">
+            <div class="text-h6">No tasks found</div>
+            <div class="text-subtitle2">
+              You can add a new task by clicking the button above.
+            </div>
+          </div>
+        </template>
+        <template v-for="task in taskStore.taskList" :key="task.id">
           <q-item clickable class="items-center q-col-gutter-0 q-pa-sm">
             <q-item-section avatar>
               <q-checkbox v-model="task.completed" @update:model-value="toggleComplete(task)" />
@@ -141,23 +149,6 @@ const priorityOptions = [
   { label: 'Medium', value: 'medium' },
   { label: 'High', value: 'high' }
 ]
-
-const filteredTasks = computed(() => {
-  return taskStore.taskList.filter(task => {
-    const matchStatus =
-      statusFilter.value === 'all' ||
-      (statusFilter.value === 'completed' && task.completed) ||
-      (statusFilter.value === 'incomplete' && !task.completed)
-
-    const matchPriority =
-      priorityFilter.value === 'all' || task.priority === priorityFilter.value
-
-    const matchSearch =
-      task.name.toLowerCase().includes(searchQuery.value.toLowerCase()) // Search filter
-
-    return matchStatus && matchPriority && matchSearch
-  })
-})
 
 async function toggleComplete(task) {
   await taskStore.updateTask(task)

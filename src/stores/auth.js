@@ -223,7 +223,7 @@ export const useAuthStore = defineStore('auth', {
         if (showNotification) {
           Notify.create({
             message: 'Logged out successfully',
-            color: 'info',
+            color: 'positive',
             position: 'top',
             timeout: 2000,
           })
