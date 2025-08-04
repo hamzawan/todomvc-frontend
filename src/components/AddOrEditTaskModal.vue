@@ -2,7 +2,7 @@
   <q-dialog v-model="show">
     <q-card style="min-width: 350px">
       <q-card-section>
-        <div class="text-h6">Add New Task</div>
+        <div class="text-h6">{{ modalTitle }}</div>
       </q-card-section>
 
       <q-card-section>
@@ -13,6 +13,9 @@
             dense
             required
             autofocus
+            :rules="[
+                (val) => val && validateTaskName(val) || 'Please enter a valid task name.',
+              ]"
           />
 
           <q-select
@@ -23,6 +26,9 @@
             emit-value
             map-options
             required
+            :rules="[
+                (val) => !!val && val !== '' || 'Please select task priority.',
+              ]"
           />
         </q-form>
       </q-card-section>
@@ -36,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 // import { watch } from 'vue'
 
 const props = defineProps({
@@ -48,23 +54,32 @@ const props = defineProps({
     type: Object,
     default: () => ({})
   },
-
   isLoading:{
     type: Boolean,
     default: false  
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'addTask'])
+const emit = defineEmits(['update:modelValue', 'addTask', 'editTask'])
 
-const show = ref(props.modelValue)
+const show = ref(false)
 
-watch(() => props.modelValue, val => (show.value = val))
+watch(() => props.modelValue, val => {
+  // updating task form values
+  task.value.name = props.editTaskObject?.name ?? ''
+  task.value.priority = props.editTaskObject?.priority ?? ''
+  
+  show.value = val
+
+})
 watch(show, val => emit('update:modelValue', val))
+
+const isEditMode = computed(() => props.editTaskObject?.id)
+const modalTitle = computed(() => isEditMode.value ? 'Edit Task' : 'Add New Task')
 
 const task = ref({
   name: '',
-  priority: null
+  priority: ''
 })
 
 const priorityOptions = [
@@ -75,8 +90,12 @@ const priorityOptions = [
 
 function submitTask () {
   if (!task.value.name || !task.value.priority) return
-  emit('addTask', { ...task.value })
-  show.value = false
-  task.value = { name: '', priority: null }
+    isEditMode.value ? emit('editTask', { ...task.value, id:props.editTaskObject?.id }) : emit('addTask', { ...task.value })
+    show.value = false
+    task.value = { name: '', priority: null }
+}
+
+function validateTaskName(taskName){
+   return /^(?!\s*$).+/.test(taskName)
 }
 </script>

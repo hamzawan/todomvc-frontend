@@ -80,7 +80,13 @@
       :isLoading="deleteTaskLoader"
     />
 
-    <AddOrEditTaskModalComponent v-model="showAddOrEditTaskModal" @addTask="addTask" :isLoading="addOrEidtTaskLoader"/>
+    <AddOrEditTaskModalComponent 
+        v-model="showAddOrEditTaskModal"  
+        :isLoading="addOrEidtTaskLoader" 
+        :editTaskObject="editTaskObject"
+        @addTask="addTask"
+        @editTask="editTask"
+    />
   </q-page>
 </template>
 
@@ -106,7 +112,7 @@ const deleteTaskModalItemName = ref('')
 const deleteTaskId = ref(null)
 const isLoading = ref(false)
 const showAddOrEditTaskModal = ref(false)
-const editTaskObject = ref(null)
+const editTaskObject = ref({})
 const addOrEidtTaskLoader = ref(false)
 const deleteTaskLoader = ref(false)
 
@@ -141,16 +147,17 @@ const filteredTasks = computed(() => {
   })
 })
 
-// Actions
 async function toggleComplete(task) {
     await taskStore.updateTask(task)
 }
 
-// function editTask(task) {
-//   console.log('Edit', task)
-// }
+async function editTask(task) {
+    addOrEidtTaskLoader.value = true
+    await taskStore.updateTask(task)
+    addOrEidtTaskLoader.value = false
+}
 
-const toggleDeleteTaskModal = (task) => {
+function toggleDeleteTaskModal(task){
   showDeleteTaskModal.value = true
   deleteTaskModalItemName.value = task.name
   deleteTaskId.value = task.id
