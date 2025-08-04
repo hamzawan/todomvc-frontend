@@ -1,1 +1,13 @@
 // app global css in SCSS form
+@import './quasar.variables.scss';
+
+a {
+  color: $link;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+a:hover {
+  text-decoration: underline;
+}
