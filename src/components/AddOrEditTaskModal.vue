@@ -18,6 +18,14 @@
               ]"
           />
 
+           <q-input
+            v-model="task.description"
+            label="Task Description"
+            dense
+            required
+            autofocus
+          />
+
           <q-select
             v-model="task.priority"
             label="Priority"
@@ -35,7 +43,7 @@
 
       <q-card-actions align="right">
         <q-btn flat label="Cancel" v-close-popup />
-        <q-btn label="Add" color="primary" @click="submitTask" :loading="isLoading" />
+        <q-btn :label="buttonLabel" color="primary" @click="submitTask" :loading="isLoading" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -68,6 +76,7 @@ watch(() => props.modelValue, val => {
   // updating task form values
   task.value.name = props.editTaskObject?.name ?? ''
   task.value.priority = props.editTaskObject?.priority ?? ''
+  task.value.description = props.editTaskObject?.description ?? ''
   
   show.value = val
 
@@ -76,10 +85,12 @@ watch(show, val => emit('update:modelValue', val))
 
 const isEditMode = computed(() => props.editTaskObject?.id)
 const modalTitle = computed(() => isEditMode.value ? 'Edit Task' : 'Add New Task')
+const buttonLabel = computed(() => isEditMode.value ? 'Update' : 'Add')
 
 const task = ref({
   name: '',
-  priority: ''
+  priority: '',
+  descritpion: ''
 })
 
 const priorityOptions = [
