@@ -2,7 +2,7 @@
   "name": "rococo-sample-vue3",
   "version": "0.0.1",
   "description": "A sample frontend application for a Rococo based backend",
-  "productName": "Rococo Sample App",
+  "productName": "Todo MVC",
   "author": "asymness <asym1999@gmail.com>",
   "type": "module",
   "private": true,
