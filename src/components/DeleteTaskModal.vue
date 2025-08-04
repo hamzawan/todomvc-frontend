@@ -12,7 +12,7 @@
 
       <q-card-actions align="right">
         <q-btn flat label="Cancel" v-close-popup />
-        <q-btn label="Delete" color="red" @click="confirmDelete" />
+        <q-btn label="Delete" color="red" @click="confirmDelete" :loading="isLoading" :disabled="isLoading" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -22,14 +22,23 @@
 import { ref, watch } from 'vue'
 
 const props = defineProps({
-  modelValue: Boolean,
+  modelValue: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
   itemName: {
     type: String,
-    default: 'this item'
+    default: ''
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
+    required: true,
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'confirmed'])
+const emit = defineEmits(['update:modelValue', 'deleteTask'])
 
 const show = ref(props.modelValue)
 
@@ -37,7 +46,7 @@ watch(() => props.modelValue, val => (show.value = val))
 watch(show, val => emit('update:modelValue', val))
 
 function confirmDelete() {
-  emit('confirmed')
+  emit('deleteTask')
   show.value = false
 }
 </script>

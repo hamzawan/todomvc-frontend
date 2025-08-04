@@ -29,7 +29,7 @@
 
       <q-card-actions align="right">
         <q-btn flat label="Cancel" v-close-popup />
-        <q-btn label="Add" color="primary" @click="submitTask" />
+        <q-btn label="Add" color="primary" @click="submitTask" :loading="isLoading" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -40,10 +40,22 @@ import { ref, watch } from 'vue'
 // import { watch } from 'vue'
 
 const props = defineProps({
-  modelValue: Boolean
+  modelValue: {
+    type: Boolean,  
+    default: false
+  },
+  editTaskObject: {
+    type: Object,
+    default: () => ({})
+  },
+
+  isLoading:{
+    type: Boolean,
+    default: false  
+  }
 })
 
-const emit = defineEmits(['update:modelValue', 'task-added'])
+const emit = defineEmits(['update:modelValue', 'addTask'])
 
 const show = ref(props.modelValue)
 
@@ -63,7 +75,7 @@ const priorityOptions = [
 
 function submitTask () {
   if (!task.value.name || !task.value.priority) return
-  emit('task-added', { ...task.value })
+  emit('addTask', { ...task.value })
   show.value = false
   task.value = { name: '', priority: null }
 }
