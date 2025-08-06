@@ -8,18 +8,16 @@
       <q-card-section>
         <q-form @submit="submitTask">
           <q-input
-            v-model="task.name"
+            v-model="task.title"
             label="Task Name"
             dense
             required
             autofocus
-            :rules="[
-                (val) => val && validateTaskName(val) || 'Please enter a valid task name.',
-              ]"
+            :rules="[(val) => (val && validateTaskName(val)) || 'Please enter a valid task name.']"
             class="q-mb-md"
           />
 
-           <q-input
+          <q-input
             v-model="task.description"
             label="Task Description"
             dense
@@ -36,9 +34,7 @@
             emit-value
             map-options
             required
-            :rules="[
-                (val) => !!val && val !== '' || 'Please select task priority.',
-              ]"
+            :rules="[(val) => (!!val && val !== '') || 'Please select task priority.']"
           />
         </q-form>
       </q-card-section>
@@ -57,58 +53,62 @@ import { ref, watch, computed } from 'vue'
 
 const props = defineProps({
   modelValue: {
-    type: Boolean,  
-    default: false
+    type: Boolean,
+    default: false,
   },
   editTaskObject: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
-  isLoading:{
+  isLoading: {
     type: Boolean,
-    default: false  
-  }
+    default: false,
+  },
 })
 
 const emit = defineEmits(['update:modelValue', 'addTask', 'editTask'])
 
 const show = ref(false)
 
-watch(() => props.modelValue, val => {
-  // updating task form values
-  task.value.name = props.editTaskObject?.name ?? ''
-  task.value.priority = props.editTaskObject?.priority ?? ''
-  task.value.description = props.editTaskObject?.description ?? ''
-  
-  show.value = val
+watch(
+  () => props.modelValue,
+  (val) => {
+    // updating task form values
+    task.value.title = props.editTaskObject?.title ?? ''
+    task.value.priority = props.editTaskObject?.priority ?? ''
+    task.value.description = props.editTaskObject?.description ?? ''
 
-})
-watch(show, val => emit('update:modelValue', val))
+    show.value = val
+  }
+)
+watch(show, (val) => emit('update:modelValue', val))
 
 const isEditMode = computed(() => props.editTaskObject?.id)
-const modalTitle = computed(() => isEditMode.value ? 'Edit Task' : 'Add New Task')
-const buttonLabel = computed(() => isEditMode.value ? 'Update' : 'Add')
+const modalTitle = computed(() => (isEditMode.value ? 'Edit Task' : 'Add New Task'))
+const buttonLabel = computed(() => (isEditMode.value ? 'Update' : 'Add'))
 
 const task = ref({
-  name: '',
+  title: '',
   priority: '',
-  description: ''
+  description: '',
 })
 
 const priorityOptions = [
   { label: 'Low', value: 'low' },
   { label: 'Medium', value: 'medium' },
-  { label: 'High', value: 'high' }
+  { label: 'High', value: 'high' },
 ]
 
-function submitTask () {
-  if (!task.value.name || !task.value.priority) return
-    isEditMode.value ? emit('editTask', { ...task.value, id:props.editTaskObject?.id }) : emit('addTask', { ...task.value })
-    show.value = false
-    task.value = { name: '', priority: null }
+function submitTask() {
+  if (!task.value.title || !task.value.priority) return
+  isEditMode.value
+    ? emit('editTask', { ...task.value, id: props.editTaskObject?.id })
+    : emit('addTask', { ...task.value })
+  show.value = false
+  task.value = { title: '', priority: null }
 }
 
-function validateTaskName(taskName){
-   return /^(?!\s*$).+/.test(taskName)
+function validateTaskName(taskName) {
+  return /^(?!\s*$).+/.test(taskName)
 }
 </script>

@@ -22,11 +22,10 @@ export const useAuthStore = defineStore('auth', {
   state: getInitialState,
 
   getters: {
-    isAuthenticated: () => {
-      return true
-      // if (!state.accessToken || !state.accessTokenExpiry) return false
-      // const currentTime = Math.floor(Date.now() / 1000)
-      // return currentTime < state.accessTokenExpiry
+    isAuthenticated: (state) => {
+      if (!state.accessToken || !state.accessTokenExpiry) return false
+      const currentTime = Math.floor(Date.now() / 1000)
+      return currentTime < state.accessTokenExpiry
     },
 
     // Additional useful getters
@@ -146,7 +145,7 @@ export const useAuthStore = defineStore('auth', {
      */
     async requestPasswordReset(email) {
       try {
-        const response = await axios.post('/auth/request_password_reset', { email })
+        const response = await axios.post('/auth/forgot_password', { email })
 
         if (response.data?.success) {
           Notify.create({
@@ -240,7 +239,7 @@ export const useAuthStore = defineStore('auth', {
      */
     async updateUser(userData) {
       try{
-        await axios.post('/auth/update', userData)
+        await axios.put('/auth/update', userData)
 
         this.user = { ...this.user, ...userData }
         localStorageService.setItem(STORAGE_KEYS.USER, this.user)

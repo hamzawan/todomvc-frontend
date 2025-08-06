@@ -33,14 +33,22 @@
   
 <script setup>
 import { ref } from 'vue'
-
+import { useAuthStore } from 'src/stores/auth'
 const email = ref('')
-const password = ref('')
+const authStore = useAuthStore()
 
 // Placeholder login function
 function onSubmit() {
   // Implement actual login logic here
-  console.log('Logging in with:', email.value, password.value)
+  authStore
+    .requestPasswordReset(email.value)
+    .then(() => {
+      this.$router.push({ name: 'login' })
+      // Optionally redirect or show a success message
+    })
+    .catch((error) => {
+      console.error('Error sending password reset email:', error)
+    })
 }
 </script>
   

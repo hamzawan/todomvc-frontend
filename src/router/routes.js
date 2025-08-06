@@ -19,6 +19,7 @@ const routes = [
         path: 'login',
         component: () => import('pages/LoginPage.vue'),
         meta: { requiresAuth: false },
+        name: 'login'
       },
       {
         path: 'signup',

@@ -4,36 +4,7 @@ import axios from 'config/axios'
 
 export const useTasksStore = defineStore('tasks', {
     state: () => ({
-        tasks: [
-            {
-                id: 1,
-                name: 'Buy groceries',
-                priority: 'medium',
-                completed: false,
-                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque efficitur, urna eu posuere iaculis, arcu mi fermentum ligula, nec tristique purus risus non nulla.'
-            },
-            {
-                id: 2,
-                name: 'Finish project',
-                priority: 'high',
-                completed: true,
-                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent aliquet purus et nulla egestas, in efficitur risus varius. Nulla facilisi. Duis id nisi dui.'
-            },
-            {
-                id: 3,
-                name: 'Call John',
-                priority: 'low',
-                completed: false,
-                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur a velit bibendum, pretium risus in, feugiat orci. Etiam euismod ligula vitae felis volutpat.'
-            },
-            {
-                id: 4,
-                name: 'Study Vue 3',
-                priority: 'high',
-                completed: false,
-                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer convallis turpis eu libero aliquet, nec cursus leo vulputate. Ut non felis vel nulla feugiat faucibus.'
-            }
-        ],
+        tasks: [],
         statusFilter: 'all',
         priorityFilter: 'all',
         searchQuery: '',
@@ -42,8 +13,10 @@ export const useTasksStore = defineStore('tasks', {
     actions: {
         async fetchTasks() {
             try {
-                const response = await axios.get(`/tasks/list?status=${this.statusFilter}&priority=${this.priorityFilter}&search=${this.searchQuery}`)
-                this.tasks = response.data
+                this.fetchTaskLoader= true
+                const response = await axios.get(`/task/list?status=${this.statusFilter}&priority=${this.priorityFilter}&search=${this.searchQuery}`)
+                this.tasks = response.data.tasks.map((task)=>({...task, completed: !!(task.status === 'completed')}))
+                this.fetchTaskLoader = false
             } catch {
                 Notify.create({
                     message: 'Something went wrong. Please try again later.',
@@ -51,10 +24,11 @@ export const useTasksStore = defineStore('tasks', {
                 })
             }
         },
-        async addTask(task) {
+        async addTask(newTask) {
             try {
-                const response = await axios.post('/tasks/create', task)
-                this.tasks.push(response.data)
+                const response = await axios.post('/task/create', newTask)
+                const {task} = response.data
+                this.tasks.push({...task, completed: !!(task.status === 'completed')})
                 Notify.create({
                     message: 'Task added successfully',
                     color: 'positive',
@@ -70,7 +44,7 @@ export const useTasksStore = defineStore('tasks', {
         },
         async deleteTask(taskId) {
             try {
-                await axios.delete(`/tasks/${taskId}/delete`)
+                await axios.delete(`/task/${taskId}`)
                 this.tasks = this.tasks.filter((existingTask) => existingTask.id !== taskId)
                 Notify.create({
                     message: 'Task deleted successfully',
@@ -85,8 +59,8 @@ export const useTasksStore = defineStore('tasks', {
         },
         async updateTask(task) {
             try {
-                const response = await axios.put(`/tasks/${task.id}/update`, task)
-                this.tasks = this.tasks.map((existingTask) => (existingTask.id === task.id ? response.data : existingTask))
+                const response = await axios.put(`/task/${task.id}`, task)
+                this.tasks = this.tasks.map((existingTask) => (existingTask.id === task.id ? {...response.data.task, completed: !!(task.status === 'completed')} : existingTask))
                 Notify.create({
                     message: 'Task updated successfully',
                     color: 'positive',
@@ -96,6 +70,22 @@ export const useTasksStore = defineStore('tasks', {
                     message: 'Something went wrong. Please try again later.',
                     color: 'negative',
                 })
+            }
+        },
+
+        async toggleTaskCompletion(task) {
+            try {
+                const response = await axios.patch(`/task/${task.id}/toggle-status`)
+                this.tasks = this.tasks.map((existingTask) => (existingTask.id === task.id ? response.data.task : existingTask))
+                Notify.create({
+                    message: 'Task completion status updated successfully',
+                    color: 'positive',
+                })
+            } catch {
+                Notify.create({
+                    message: 'Something went wrong. Please try again later.',
+                    color: 'negative',
+                }) 
             }
         },
         setStatusFilter(statusFilter) {

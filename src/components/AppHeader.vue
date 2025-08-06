@@ -17,7 +17,7 @@
 
       <div v-if="authStore.isAuthenticated" class="cursor-pointer">
         Logged in as
-        <b>{{ authStore?.user?.first_name ?? 'John' }} {{ authStore?.user?.last_name ?? 'Doe' }}</b> -->
+        <b>{{ authStore?.user?.first_name }} {{ authStore?.user?.last_name }}</b>
         <q-icon size="xs" name="arrow_drop_down" />
         <q-menu fir anchor="bottom right" self="top right">
           <q-list style="min-width: 100px">
@@ -40,7 +40,6 @@
   </q-drawer>
 
   <EditUserNameModalComponent v-model="showEditUserNameModal" @editProfile="editProfile" />
-
 </template>
 
 
