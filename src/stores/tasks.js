@@ -14,7 +14,7 @@ export const useTasksStore = defineStore('tasks', {
         async fetchTasks() {
             try {
                 this.fetchTaskLoader= true
-                const response = await axios.get(`/task/list?status=${this.statusFilter}&priority=${this.priorityFilter}&search=${this.searchQuery}`)
+                const response = await axios.get(`/task/list?status=${this.statusFilter}&priority=${this.priorityFilter}&title=${this.searchQuery}`)
                 this.tasks = response.data.tasks.map((task)=>({...task, completed: !!(task.status === 'completed')}))
                 this.fetchTaskLoader = false
             } catch {

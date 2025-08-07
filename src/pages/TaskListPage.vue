@@ -60,7 +60,7 @@
 
     <!-- Task List -->
     <q-list bordered separator style="border-radius: 10px; padding: 10px 0px">
-      <q-infinite-scroll :disable="isAllLoaded" @load="loadMoreTasks" :offset="200">
+      <q-infinite-scroll :offset="200">
         <template v-if="taskStore.taskList.length === 0 && !taskStore.fetchTaskLoader">
           <div class="text-center q-my-xl">
             <div class="text-h6">No tasks found</div>

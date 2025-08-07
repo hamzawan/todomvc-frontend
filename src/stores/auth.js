@@ -239,13 +239,16 @@ export const useAuthStore = defineStore('auth', {
      */
     async updateUser(userData) {
       try{
-        await axios.put('/auth/update', userData)
-
-        this.user = { ...this.user, ...userData }
+        const response = await axios.put('/auth/profile', userData)
+        this.user = {...response.data.person}
         localStorageService.setItem(STORAGE_KEYS.USER, this.user)
       }
-      catch(error){
-        console.log(error)
+      catch{
+         Notify.create({
+              message: 'Something went wrong. Please try again later.',
+              color: 'negative',
+              position: 'top',
+          })
       }
     },
 
