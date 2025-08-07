@@ -67,8 +67,13 @@
             <div class="text-subtitle2">You can add a new task by clicking the button above.</div>
           </div>
         </template>
-        <template v-for="task in taskStore.taskList" :key="task.id">
-          <q-item clickable class="items-start q-col-gutter-0 q-pa-sm">
+        <template v-if="taskStore.taskList.length > 0 && !taskStore.fetchTaskLoader">
+          <q-item
+            v-for="task in taskStore.taskList"
+            :key="task.id"
+            clickable
+            class="items-start q-col-gutter-0 q-pa-sm"
+          >
             <q-item-section avatar class="q-pa-none" style="min-width: 45px">
               <q-checkbox v-model="task.completed" @update:model-value="toggleComplete(task)" />
             </q-item-section>
