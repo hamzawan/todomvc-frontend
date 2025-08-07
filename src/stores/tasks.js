@@ -21,6 +21,7 @@ export const useTasksStore = defineStore('tasks', {
                 Notify.create({
                     message: 'Something went wrong. Please try again later.',
                     color: 'negative',
+                    position: 'top',
                 })
             }
         },
@@ -32,6 +33,7 @@ export const useTasksStore = defineStore('tasks', {
                 Notify.create({
                     message: 'Task added successfully',
                     color: 'positive',
+                    position: 'top',
                 })
 
 
@@ -39,6 +41,7 @@ export const useTasksStore = defineStore('tasks', {
                 Notify.create({
                     message: 'Something went wrong. Please try again later.',
                     color: 'negative',
+                    position: 'top',
                 })
             }
         },
@@ -49,26 +52,30 @@ export const useTasksStore = defineStore('tasks', {
                 Notify.create({
                     message: 'Task deleted successfully',
                     color: 'positive',
+                    position: 'top',
                 })
             } catch {
                 Notify.create({
                     message: 'Something went wrong. Please try again later.',
                     color: 'negative',
+                    position: 'top',
                 })
             }
         },
         async updateTask(task) {
             try {
                 const response = await axios.put(`/task/${task.id}`, task)
-                this.tasks = this.tasks.map((existingTask) => (existingTask.id === task.id ? {...response.data.task, completed: !!(task.status === 'completed')} : existingTask))
+                this.tasks = this.tasks.map((existingTask) => (existingTask.id === task.id ? {...response.data.task, completed: !!(response.data.task.status === 'completed')} : existingTask))
                 Notify.create({
                     message: 'Task updated successfully',
                     color: 'positive',
+                    position: 'top',
                 })
             } catch {
                 Notify.create({
                     message: 'Something went wrong. Please try again later.',
                     color: 'negative',
+                    position: 'top',
                 })
             }
         },
@@ -76,15 +83,17 @@ export const useTasksStore = defineStore('tasks', {
         async toggleTaskCompletion(task) {
             try {
                 const response = await axios.patch(`/task/${task.id}/toggle-status`)
-                this.tasks = this.tasks.map((existingTask) => (existingTask.id === task.id ? response.data.task : existingTask))
+                this.tasks = this.tasks.map((existingTask) => (existingTask.id === task.id ? {...response.data.task, completed: !!(response.data.task.status === 'completed')}  : existingTask))
                 Notify.create({
                     message: 'Task completion status updated successfully',
                     color: 'positive',
+                    position: 'top',
                 })
             } catch {
                 Notify.create({
                     message: 'Something went wrong. Please try again later.',
                     color: 'negative',
+                    position: 'top',
                 }) 
             }
         },

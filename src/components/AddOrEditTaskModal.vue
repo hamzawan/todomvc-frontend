@@ -15,6 +15,7 @@
             autofocus
             :rules="[(val) => (val && validateTaskName(val)) || 'Please enter a valid task name.']"
             class="q-mb-md"
+            hide-bottom-space
           />
 
           <q-input
@@ -24,6 +25,7 @@
             required
             autofocus
             class="q-mb-md"
+            hide-bottom-space
           />
 
           <q-select
@@ -35,6 +37,7 @@
             map-options
             required
             :rules="[(val) => (!!val && val !== '') || 'Please select task priority.']"
+            hide-bottom-space
           />
         </q-form>
       </q-card-section>

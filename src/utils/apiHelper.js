@@ -8,6 +8,7 @@ export async function handleAuthRequest(store, requestFn, router) {
     Notify.create({
       message: 'An unknown error occurred',
       color: 'negative',
+      position: 'top',
     })
     return false
   }
@@ -16,6 +17,7 @@ export async function handleAuthRequest(store, requestFn, router) {
     Notify.create({
       message: response.data?.message,
       color: 'negative',
+      position: 'top',
     })
     return false
   }

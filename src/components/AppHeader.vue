@@ -21,11 +21,15 @@
         <q-icon size="xs" name="arrow_drop_down" />
         <q-menu fir anchor="bottom right" self="top right">
           <q-list style="min-width: 100px">
-            <q-item clickable v-close-popup>
-              <q-item-section @click="toggleEditProfileModal()">Edit username</q-item-section>
+            <q-item clickable v-close-popup class="dropdwon-item">
+              <q-item-section @click="toggleEditProfileModal()" class="dropdwon-text"
+                >Edit Username</q-item-section
+              >
             </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section @click="authStore.logout()">Logout</q-item-section>
+            <q-item clickable v-close-popup class="dropdwon-item">
+              <q-item-section @click="authStore.logout()" class="dropdwon-text"
+                >Logout</q-item-section
+              >
             </q-item>
           </q-list>
         </q-menu>
@@ -33,7 +37,13 @@
     </q-toolbar>
   </q-header>
 
-  <q-drawer v-if="authStore.isAuthenticated" v-model="leftDrawerOpen" show-if-above bordered>
+  <q-drawer
+    v-if="authStore.isAuthenticated"
+    v-model="leftDrawerOpen"
+    show-if-above
+    bordered
+    :width="220"
+  >
     <q-list>
       <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
     </q-list>
@@ -81,3 +91,13 @@ function editProfile(user) {
   showEditUserNameModal.value = false
 }
 </script>
+
+<style lang="scss">
+.dropdwon-item {
+  min-height: 40px;
+  .dropdwon-text {
+    height: max-content;
+    margin: auto 0;
+  }
+}
+</style>

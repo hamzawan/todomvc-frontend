@@ -5,7 +5,7 @@
     <!-- Filter Row -->
     <div class="row q-col-gutter-md q-mb-md justify-center items-end">
       <!-- Search Bar in the First Column -->
-      <div class="col-12 col-sm-6 col-md-4 col-lg-4 q-pt-none q-pl-md">
+      <div class="col-12 col-sm-6 col-md-3 col-lg-4 q-pt-none q-pl-md">
         <q-input
           v-model="searchQuery"
           label="Search Tasks"
@@ -47,7 +47,7 @@
       </div>
 
       <!-- Add Task Button Column -->
-      <div class="col-12 col-sm-6 col-md-2 col-lg-2 q-pt-none">
+      <div class="col-12 col-sm-6 col-md-3 col-lg-2 q-pt-none">
         <q-btn
           label="Add Task"
           icon="add"
@@ -62,21 +62,21 @@
     <q-list bordered separator style="border-radius: 10px; padding: 10px 0px">
       <q-infinite-scroll :disable="isAllLoaded" @load="loadMoreTasks" :offset="200">
         <template v-if="taskStore.taskList.length === 0 && !taskStore.fetchTaskLoader">
-          <div class="text-center q-mb-md">
+          <div class="text-center q-my-xl">
             <div class="text-h6">No tasks found</div>
             <div class="text-subtitle2">You can add a new task by clicking the button above.</div>
           </div>
         </template>
         <template v-for="task in taskStore.taskList" :key="task.id">
-          <q-item clickable class="items-center q-col-gutter-0 q-pa-sm">
-            <q-item-section avatar>
+          <q-item clickable class="items-start q-col-gutter-0 q-pa-sm">
+            <q-item-section avatar class="q-pa-none" style="min-width: 45px">
               <q-checkbox v-model="task.completed" @update:model-value="toggleComplete(task)" />
             </q-item-section>
 
             <q-item-section>
               <q-item-label :class="{ 'text-strike text-grey': task.completed }">
                 <div class="row items-center">
-                  <div class="text-subtitle2 text-weight-bold q-mr-sm q-mb-xs">
+                  <div class="text-subtitle2 text-weight-bold q-mr-sm q-mb-none">
                     {{ task.title }}
                   </div>
                   <q-badge
@@ -291,6 +291,7 @@ function getPriorityColor(priority) {
   border-radius: 5px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   line-height: normal;
+  margin-top: 13px;
 }
 
 .custom-btn:hover {
@@ -304,5 +305,8 @@ function getPriorityColor(priority) {
 
 .custom-btn.q-btn--flat.q-btn--dense {
   transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.q-select__dropdown-icon {
+  margin-top: 13px;
 }
 </style>
