@@ -39,7 +39,7 @@
   </q-dialog>
 </template>
 <script setup>
-import { ref, defineProps, defineEmits, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useAuthStore } from 'src/stores/auth'
 
 const props = defineProps({

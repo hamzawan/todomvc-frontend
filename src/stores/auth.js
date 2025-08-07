@@ -242,6 +242,11 @@ export const useAuthStore = defineStore('auth', {
         const response = await axios.put('/auth/profile', userData)
         this.user = {...response.data.person}
         localStorageService.setItem(STORAGE_KEYS.USER, this.user)
+         Notify.create({
+              message: 'User details updated successfully.',
+              color: 'positive',
+              position: 'top',
+          })
       }
       catch{
          Notify.create({

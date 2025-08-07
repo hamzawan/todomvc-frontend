@@ -4,7 +4,7 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
-        path: 'dashboard',
+        path: 'tasks',
         component: () => import('pages/TaskListPage.vue'),
         meta: { requiresAuth: true },
       },

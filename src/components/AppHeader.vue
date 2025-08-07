@@ -67,9 +67,9 @@ const showEditUserNameModal = ref(false)
 
 const linksList = [
   {
-    title: 'Dashboard',
-    icon: 'code',
-    link: '/dashboard',
+    title: 'My Tasks',
+    icon: 'list',
+    link: '/tasks',
   },
 ]
 
