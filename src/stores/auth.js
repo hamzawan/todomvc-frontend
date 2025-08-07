@@ -3,6 +3,7 @@ import { Notify } from 'quasar'
 import axios from 'config/axios'
 import localStorageService from 'services/localStorage.service'
 import { handleAuthRequest } from '@/utils/apiHelper'
+import {useTasksStore} from 'src/stores/tasks'
 
 // Constants for localStorage keys
 const STORAGE_KEYS = {
@@ -211,14 +212,11 @@ export const useAuthStore = defineStore('auth', {
      * Log out user
      */
     async logout(showNotification = true) {
-      try {
-        // Attempt to notify server about logout (optional)
-        await axios.post('/auth/logout').catch(() => {
-          // Ignore errors on logout endpoint
-        })
-      } finally {
-        // Always clear local data regardless of server response
+      // Clear auth and task data
+        const taskStore = useTasksStore()
+
         this.clearAuthData()
+        taskStore.clearTaskData()
 
         if (showNotification) {
           Notify.create({
@@ -231,7 +229,6 @@ export const useAuthStore = defineStore('auth', {
 
         // Redirect to login
         this.router?.push('/login')
-      }
     },
 
     /**

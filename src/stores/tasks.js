@@ -108,6 +108,13 @@ export const useTasksStore = defineStore('tasks', {
         setSearchQuery(query) {
             this.searchQuery = query
             this.fetchTasks()
+        },
+        clearTaskData(){
+            this.tasks = []
+            this.statusFilter = 'all'
+            this.priorityFilter = 'all'
+            this.searchQuery = ''
+            this.fetchTaskLoader = false
         }
     },
     getters: {
